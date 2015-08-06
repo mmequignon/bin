@@ -3,43 +3,37 @@
  
 testdir()
 {
-if [ ! -d "~/Images/screenshots" ]
-    then
-    mkdir ~/Images/screenshots
-fi
-if [ ! -d "~/Images/screenshots/GIF" ]
-    then
-    mkdir ~/Images/screenshots/GIF
-fi
-if [ ! -d "~/Images/screenshots/GIF/tmp" ]
-then
-mkdir ~/Images/screenshots/GIF/tmp
-fi
+    if [ ! -d "~/Images/screenshots" ]; then
+        mkdir ~/Images/screenshots
+    fi
+    if [ ! -d "~/Images/screenshots/GIF" ]; then
+        mkdir ~/Images/screenshots/GIF
+    fi
+    if [ ! -d "~/Images/screenshots/GIF/tmp" ]; then
+        mkdir ~/Images/screenshots/GIF/tmp
+    fi
+    if [ ! -d "~/Images/screenshots/GIF/tmp/output" ]; then
+    mkdir ~/Images/screenshots/GIF/tmp/output
+    fi
  
-if [ ! -d "~/Images/screenshots/GIF/tmp/output" ]
-then
-mkdir ~/Images/screenshots/GIF/tmp/output
-fi
- 
-contenu=$(ls -a ~/Images/screenshots/GIF/tmp/output/ | sed -e "/\.$/d" | wc -l)
-if [ ! $contenu -eq 0 ]
-then
-rm ~/Images/screenshots/GIF/tmp/output/*
-fi
+    contenu=$(ls -a ~/Images/screenshots/GIF/tmp/output/ | sed -e "/\.$/d" | wc -l)
+    if [ ! $contenu -eq 0 ]; then
+        rm ~/Images/screenshots/GIF/tmp/output/*
+    fi
 }
  
 captoreso()
 {
-x=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f1)
-y=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f2)
-resolution=$"$x*$y"
+    x=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f1)
+    y=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f2)
+    resolution=$"$x*$y"
 }
  
  
 creajpg()
 {
-captoreso
-ffmpeg -framerate 15 -f x11grab -video_size $resolution -i :0.0 -r 15 -q:v 1 ~/Images/screenshots/GIF/tmp/output/image-%05d.png
+    captoreso
+    ffmpeg -framerate 15 -f x11grab -video_size $resolution -i :0.0 -r 15 -q:v 1 ~/Images/screenshots/GIF/tmp/output/image-%05d.png
 }
  
 genegif()
@@ -51,24 +45,21 @@ genegif()
     rm ~/Images/screenshots/GIF/tmp/output/*
     rmdir ~/Images/screenshots/GIF/tmp/output
     rmdir ~/Images/screenshots/GIF/tmp
- 
- 
 }
  
 modifs()
 {
     read -p "Les images seront fusionnées en un GIF animé après validation. Vous pouvez couper des parties de la capture en supprimant les images correspondantes. Avez vous des modifications à apporter ? oui/non : " reponse
-    until [ $reponse == 'oui' ] || [ $reponse == 'o' ] || [ $reponse == 'yes' ] ||[ $reponse == 'y' ] || [ $reponse == 'non' ] || [ $reponse == 'no' ] ||[ $reponse == 'n' ];
+    until [ $reponse == 'oui' ] || [ $reponse == 'o' ] || [ $reponse == 'yes' ] ||[ $reponse == 'y' ] || [ $reponse == 'non' ] || [ $reponse == 'no' ] ||[ $reponse == 'n' ]
     do 
         read -p "La réponse est invalide. Avez vous des modifications à apporter ? oui/yes/o/y/non/no/n  " reponse
     done
-    if [[ "$reponse" == "oui" ]] || [ $reponse == 'yes' ] || [ $reponse == 'o' ] || [ $reponse == 'y' ]
-        then
+    if [[ "$reponse" == "oui" ]] || [ $reponse == 'yes' ] || [ $reponse == 'o' ] || [ $reponse == 'y' ]; then
         xdg-open ~/Images/screenshots/GIF/tmp/output
         until [ "$TRMN" == "oui" ] || [ "$TRMN" == "yes" ] || [ "$TRMN" == "o" ] || [ "$TRMN" == "y" ]
-            do 
-                read -p "Modifications terminées ? oui/yes/o/y/non/no/n : " TRMN
-            done
+        do 
+            read -p "Modifications terminées ? oui/yes/o/y/non/no/n : " TRMN
+        done
         genegif
     else
         genegif
