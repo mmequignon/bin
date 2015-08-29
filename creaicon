@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for x in *.png; do convert -fuzz XX% -transparent white "${x}" "${x%.*}.png"; done
+for x in *.png; do convert -fill "#aaabab" -opaque black "${x}" "${x%.*}.png"; done
+for x in *.png; do convert -bordercolor none -border 1 "${x}" "${x%.*}.png"; done
+
