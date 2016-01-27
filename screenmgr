@@ -4,7 +4,7 @@ if [ -e /usr/bin/xrandr ]
 then
     xr="/usr/bin/xrandr"
 else
-    echo "/usr/bin/xrander does not exist"
+    echo "/usr/bin/xrandr does not exist"
     exit 0
 fi
 
