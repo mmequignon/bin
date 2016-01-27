@@ -1,10 +1,16 @@
 #!/bin/bash
 
-xr=/usr/bin/xrandr
+if [ -e /usr/bin/xrandr ] 
+then
+    xr="/usr/bin/xrandr"
+else
+    echo "/usr/bin/xrander does not exist"
+    exit 0
+fi
 
 if [ -z $1 ] || [ -z $2 ]
 then
-    echo Missing options. Check out for the right syntax.
+    echo "Missing options. Check out for the right syntax."
     echo "screenmgr [action] [device] [position]" 
     echo "action : -a | --add | -d | --disconnect"
     echo "device : -h | --hdmi | -v | --vga"                                                               
@@ -37,7 +43,7 @@ case $i in
         position="same-as"
         ;;
     *)
-        echo Unrecognized option. Check out for the right syntax.
+        echo "Unrecognized option. Check out for the right syntax."
         echo "screenmgr [action] [device] [position]"
         echo "action : -a | --add | -d | --disconnect"
         echo "device : -h | --hdmi | -v | --vga"
@@ -50,12 +56,12 @@ done
 if [ $action == "off" ]
 then
     $xr --output $device --$action
-
+    exit 0
 else
     if [ -z $position ]
     then
         position="same-as"
     fi
     $xr --output $device --$action --$position LVDS1
+    exit 0
 fi
-
