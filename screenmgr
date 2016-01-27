@@ -28,10 +28,10 @@ case $i in
         device="HDMI2"
         ;;
     -l|--left)
-        position="left-to"
+        position="left-of"
         ;;
     -r|--right)
-        position="right to"
+        position="right-of"
         ;;
     -c|--clone)
         position="same-as"
