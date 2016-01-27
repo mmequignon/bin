@@ -1,8 +1,7 @@
 #!/bin/bash
 
  
-testdir()
-{
+testdir(){
     if [ ! -d "~/Images/screenshots" ]; then
         mkdir ~/Images/screenshots
     fi
@@ -22,33 +21,27 @@ testdir()
     fi
 }
  
-captoreso()
-{
+captoreso(){
     x=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f1)
     y=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f2)
     resolution=$"$x*$y"
 }
  
  
-creajpg()
-{
+creajpg(){
     captoreso
-    ffmpeg -framerate 15 -f x11grab -video_size $resolution -i :0.0 -r 15 -q:v 1 ~/Images/screenshots/GIF/tmp/output/image-%05d.png
+    ffmpeg -framerate 5 -f x11grab -video_size $resolution -i :0.0 -r 5 -q:v 1 ~/Images/screenshots/GIF/tmp/output/image-%05d.png
 }
  
-genegif()
-{
+genegif(){
     convert ~/Images/screenshots/GIF/tmp/output/* ~/Images/screenshots/GIF/tmp/output.gif
     NOW=$(date +%m-%d-%Y-%T)
-    convert ~/Images/screenshots/GIF/tmp/output.gif -fuzz 10% -layers Optimize ~/Images/screenshots/GIF/"$NOW-capture.gif"
-    rm ~/Images/screenshots/GIF/tmp/output.gif
-    rm ~/Images/screenshots/GIF/tmp/output/*
-    rmdir ~/Images/screenshots/GIF/tmp/output
-    rmdir ~/Images/screenshots/GIF/tmp
+    convert -delay 20x100 ~/Images/screenshots/GIF/tmp/output.gif ~/Images/screenshots/GIF/tmp/slow.gif
+    convert ~/Images/screenshots/GIF/tmp/slow.gif -fuzz 10% -layers Optimize ~/Images/screenshots/GIF/"$NOW-capture.gif"
+    rm -R ~/Images/screenshots/GIF/tmp
 }
  
-modifs()
-{
+modifs(){
     read -p "Les images seront fusionnées en un GIF animé après validation. Vous pouvez couper des parties de la capture en supprimant les images correspondantes. Avez vous des modifications à apporter ? oui/non : " reponse
     until [ $reponse == 'oui' ] || [ $reponse == 'o' ] || [ $reponse == 'yes' ] ||[ $reponse == 'y' ] || [ $reponse == 'non' ] || [ $reponse == 'no' ] ||[ $reponse == 'n' ]
     do 
