@@ -12,7 +12,18 @@ arguments=( "$@" )
 if [ ${#arguments[@]} -lt "1" ]
 then
     echo "Missing options. Check out for the right syntax." 
-    "1"=$"-h"
+    echo "screenmgr [action] [device] [position]"
+    echo "screenmgr -l to list available devices"
+    echo -e "\e[1;37mactions \e[0m"
+    echo "-c Activating screen mode"
+    echo "-d Disactivating screen mode"
+    echo -e "\e[1;37mdevices \e[0m"
+    echo "Please use, here, one of the available devices printed with the "-l" option."
+    echo -e "\e[1;37mpotition \e[0m"
+    echo "--left In order to place the new screen on the left of the primary one."
+    echo "--right In order to place the new screen on the right of the primary one."
+    echo "--clone In order to have the same picture on both screens"
+    exit 0
 fi
 
 string=$( $xr | awk '/ connected/{printf("%s ", $1 )}' )
@@ -91,10 +102,6 @@ then
             ;;
         *)
             echo "Unrecognized option. Check out for the right syntax."
-            echo "screenmgr [action] [device] [position]"
-            echo "action : -c | -d | -l"
-            echo "position : --right --left --clone"
-            echo "To list available devices : screenmgr -s | --screens"
             exit 0
             ;;
     esac
