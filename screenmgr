@@ -8,50 +8,95 @@ else
     exit 0
 fi
 
-if [ -z $1 ] || [ -z $2 ]
+arguments=( "$@" )
+if [ ${#arguments[@]} -lt "1" ]
 then
-    echo "Missing options. Check out for the right syntax."
-    echo "screenmgr [action] [device] [position]" 
-    echo "action : -a | --add | -d | --disconnect"
-    echo "device : -h | --hdmi | -v | --vga"                                                               
-    echo "position : -r | --right | -l | --left | -c | --clone"  
-    exit 0
+    echo "Missing options. Check out for the right syntax." 
+    "1"=$"-h"
 fi
 
-for i in $@
-do
-case $i in
-    -a|--add)
+string=$( $xr | awk '/ connected/{printf("%s ", $1 )}' )
+IFS=', ' read -r -a devices <<< "$string"
+
+case ${arguments[0]} in
+    -c)
         action="auto"
         ;;
-    -d|--disconnect)
+    -d)
         action="off"
         ;;
-    -v|--vga)
-        device="VGA1"
+    -l)
+        if [ "${#devices[@]}"-lq1 ]
+        then
+            echo "There's no available device. Please connect one."
+        else
+            echo List of available devices :
+            for (( i=1 ; i<="${#devices[@]}" ; i++ ))
+            do
+                echo "${devices[$i]}"
+            done
+        fi
+        exit 0
         ;;
-    -h|--hdmi)
-        device="HDMI2"
+    -h)
+        echo "screenmgr [action] [device] [position]"
+        echo "screenmgr -l to list available devices"
+        echo -e "\e[1;37mactions \e[0m"
+        echo "-c Activating screen mode"
+        echo "-d Disactivating screen mode"
+        echo -e "\e[1;37mdevices \e[0m"
+        echo "Please use, here, one of the available devices printed with the "-l" option."
+        echo -e "\e[1;37mpotition \e[0m"
+        echo "--left In order to place the new screen on the left of the primary one."
+        echo "--right In order to place the new screen on the right of the primary one."
+        echo "--clone In order to have the same picture on both screens"
+        exit 0
         ;;
-    -l|--left)
+
+    *)
+        echo Invalid action. 
+        echo "First argument would be -c / -d / -l"
+        echo "Please use the -h option to get more information."
+        exit 0
+        ;;
+esac
+
+for dev in "${!devices[@]}"
+do
+    if [ "$dev" == "${arguments[1]}" ]
+    then
+        device="${arguments[1]}"
+    else
+        echo "No device or non-available device selected, please, choose one :"
+        for (( i=1 ; i<="${#devices[@]}" ; i++ ))
+        do
+            echo "${devices[$i]}"
+        done
+        exit 0
+    fi
+done
+
+case ${arguments[2]} in 
+    --left)
         position="left-of"
         ;;
-    -r|--right)
+    --right)
         position="right-of"
         ;;
-    -c|--clone)
+    --clone)
         position="same-as"
         ;;
     *)
         echo "Unrecognized option. Check out for the right syntax."
         echo "screenmgr [action] [device] [position]"
-        echo "action : -a | --add | -d | --disconnect"
-        echo "device : -h | --hdmi | -v | --vga"
-        echo "position : -r | --right | -l | --left | -c | --clone"
+        echo "action : -c | -d | -l"
+        echo "position : --right --left --clone"
+        echo "To list available devices : screenmgr -s | --screens"
         exit 0
         ;;
 esac
-done
+
+
 
 if [ $action == "off" ]
 then
