@@ -26,7 +26,7 @@ case ${arguments[0]} in
         action="off"
         ;;
     -l)
-        if [ "${#devices[@]}"-lq1 ]
+        if [ "${#devices[@]}"-lq 1 ]
         then
             echo "There's no available device. Please connect one."
         else
@@ -63,10 +63,11 @@ esac
 
 for dev in "${!devices[@]}"
 do
-    if [ "$dev" == "${arguments[1]}" ]
+    if [ "$dev"=="${arguments[1]}" ]
     then
         device="${arguments[1]}"
     else
+        echo "${arguments[1]}"
         echo "No device or non-available device selected, please, choose one :"
         for (( i=1 ; i<="${#devices[@]}" ; i++ ))
         do
