@@ -77,25 +77,28 @@ do
     fi
 done
 
-case ${arguments[2]} in 
-    --left)
-        position="left-of"
-        ;;
-    --right)
-        position="right-of"
-        ;;
-    --clone)
-        position="same-as"
-        ;;
-    *)
-        echo "Unrecognized option. Check out for the right syntax."
-        echo "screenmgr [action] [device] [position]"
-        echo "action : -c | -d | -l"
-        echo "position : --right --left --clone"
-        echo "To list available devices : screenmgr -s | --screens"
-        exit 0
-        ;;
-esac
+if [ "$action" != "off" ] 
+then
+    case ${arguments[2]} in 
+        --left)
+            position="left-of"
+            ;;
+        --right)
+            position="right-of"
+            ;;
+        --clone)
+            position="same-as"
+            ;;
+        *)
+            echo "Unrecognized option. Check out for the right syntax."
+            echo "screenmgr [action] [device] [position]"
+            echo "action : -c | -d | -l"
+            echo "position : --right --left --clone"
+            echo "To list available devices : screenmgr -s | --screens"
+            exit 0
+            ;;
+    esac
+fi
 
 
 
