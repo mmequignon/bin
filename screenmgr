@@ -37,7 +37,7 @@ case ${arguments[0]} in
         action="off"
         ;;
     -l)
-        if [ "${#devices[@]}"-lq 1 ]
+        if [ ${#devices[@]} -le "1" ]
         then
             echo "There's no available device. Please connect one."
         else
