@@ -39,7 +39,7 @@ case ${arguments[0]} in
     -l)
         if [ ${#devices[@]} -le "1" ]
         then
-            echo "There's no available device. Please connect one."
+            echo "There's no available screen. Please connect one more device."
         else
             echo List of available devices :
             for (( i=1 ; i<="${#devices[@]}" ; i++ ))
