@@ -1,16 +1,23 @@
 # bin
-quelques exercices de scripting en Bash.
+Some scripts I've made
 
 ###creagif
 
-Ce script permet de créer des captures d'ecran animées au format gif.
-Il est écrit en bash et utilise imagemagic, ffmpeg et xrandr.
-Il fonctionne en plusieurs étapes. Dans un premier temps, il fera une capture de l'écran et créera 15 images par seconde au format PNG via ffmpeg. 
-Dès lors, il sera possible de découper certaines parties de la capture en supprimant les images correspondantes. Par exemple pour couper les quelques secondes lors du lancement du script.
-Ensuite, imagemagic fusionnera le reste en un fichier GIF.
+This script makes GIF animated screenshots.
+Requirements: imagemagick, ffmpeg
+It's bash written and work with ffmpeg and imagemagick.
+In a first time, it'll make five screenshots per seconds using ffmpeg. And then, you will be able to cut undesirable parts, deleting the concerned pictures.
+Once you have finished your modifications, imagemagick will merge png's in a single animated GIF file.
 
-###creaicon
+###screenmgr
 
-Ce script permet de créer des icones au format png conformes à ce que je cherche pour mes widgets awesome WM.
-Ceux ci sont au format png, ont un fond transparent, sont blancs et ont une légère marge.
-Donne des icones "out of the box" avec ceux du dossier joint, de sm4tik du projet dzen.
+This one allows you to manage your screens.
+A little useless if you use a GUI, but useful if you are using a window manager like awesome, as I do.
+First, you'll have to list your devices with the **-l** option, available screens will be displayed, HDMI2, for example.
+Then, you can choose an action, connect, or disconnect.
+If you want to use the screen as a cloned display :
+**screenmgr -c HDMI2 --clone**
+And if you want to disconnect it :
+**screenmgr -d HDMI2**
+
+Try screenmgr **-h** if you want to know more about the syntax and the different options
