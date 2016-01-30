@@ -1,7 +1,6 @@
 #!/bin/bash
 
- 
-testdir(){
+testDir(){
     if [ ! -d "~/Images/screenshots" ]; then
         mkdir ~/Images/screenshots
     fi
@@ -14,52 +13,82 @@ testdir(){
     if [ ! -d "~/Images/screenshots/GIF/tmp/output" ]; then
     mkdir ~/Images/screenshots/GIF/tmp/output
     fi
- 
-    contenu=$(ls -a ~/Images/screenshots/GIF/tmp/output/ | sed -e "/\.$/d" | wc -l)
-    if [ ! $contenu -eq 0 ]; then
+    content=$(ls -a ~/Images/screenshots/GIF/tmp/output/ | sed -e "/\.$/d" | wc -l)
+    if [ ! $content -eq 0 ]; then
         rm ~/Images/screenshots/GIF/tmp/output/*
     fi
 }
- 
+
+testSoft(){
+    if [! -e /usr/bin/xrandr ]
+    then
+        echo "/usr/bin/xrandr does not exist"
+        exit 0
+    else
+        XRANDR="/usr/bin/xrandr"
+    fi
+    if [! -e /usr/bin/ffmpeg ]
+    then
+        echo "/usr/bin/ffmpeg does not exist. Please install ffmpeg"
+        exit 0
+    else FFMPEG="/usr/bin/ffmpeg"
+    fi
+    if [! -e /usr/bin/convert ]
+    then                                                                                      
+        echo "/usr/bin/convert does not exist. Please install imagemagick"
+        exit 0
+    else
+        CONVERT="/usr/bin/convert"
+    fi    
+    if [! -e /usr/bin/xdg-open ]
+    then
+        echo "/usr/bin/xrandr does not exist"
+        exit 0
+    else
+        XDG="/usr/bin/xdg-open"
+    fi    
+}
+
 captoreso(){
-    x=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f1)
-    y=$(xrandr --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f2)
+    x=$($XRANDR --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f1)
+    y=$($XRANDR --current | grep '*+' | uniq | awk '{print $1}' |  cut -d 'x' -f2)
     resolution=$"$x*$y"
 }
  
- 
-creajpg(){
+creaPng(){
     captoreso
-    ffmpeg -framerate 5 -f x11grab -video_size $resolution -i :0.0 -r 5 -q:v 1 ~/Images/screenshots/GIF/tmp/output/image-%05d.png
+    $FFMPEG -framerate 5 -f x11grab -video_size $resolution -i :0.0 -r 5 -q:v 1 ~/Images/screenshots/GIF/tmp/output/image-%05d.png
 }
  
-genegif(){
-    convert ~/Images/screenshots/GIF/tmp/output/* ~/Images/screenshots/GIF/tmp/output.gif
+geneGif(){
+    $CONVERT ~/Images/screenshots/GIF/tmp/output/* ~/Images/screenshots/GIF/tmp/output.gif
     NOW=$(date +%m-%d-%Y-%T)
-    convert -delay 20x100 ~/Images/screenshots/GIF/tmp/output.gif ~/Images/screenshots/GIF/tmp/slow.gif
-    convert ~/Images/screenshots/GIF/tmp/slow.gif -fuzz 10% -layers Optimize ~/Images/screenshots/GIF/"$NOW-capture.gif"
+    $CONVERT -delay 20x100 ~/Images/screenshots/GIF/tmp/output.gif ~/Images/screenshots/GIF/tmp/slow.gif
+    $CONVERT ~/Images/screenshots/GIF/tmp/slow.gif -fuzz 10% -layers Optimize ~/Images/screenshots/GIF/"$NOW-capture.gif"
     rm -R ~/Images/screenshots/GIF/tmp
 }
  
 modifs(){
-    read -p "Les images seront fusionnées en un GIF animé après validation. Vous pouvez couper des parties de la capture en supprimant les images correspondantes. Avez vous des modifications à apporter ? oui/non : " reponse
-    until [ $reponse == 'oui' ] || [ $reponse == 'o' ] || [ $reponse == 'yes' ] ||[ $reponse == 'y' ] || [ $reponse == 'non' ] || [ $reponse == 'no' ] ||[ $reponse == 'n' ]
+    read -p "Pictures will be merged into a GIF after validation. You can now cut undesirable parts if you delete concerned pictures. Do you want to ? yes/no : " answer
+    until [ $answer == 'yes' ] || [ $answer == 'y' ] || [ $answer == 'no' ] || [ $answer == 'n' ]
     do 
-        read -p "La réponse est invalide. Avez vous des modifications à apporter ? oui/yes/o/y/non/no/n  " reponse
+        read -p "Invalid answer. Do you want to delete some parts ? yes/no  " answer
     done
-    if [[ "$reponse" == "oui" ]] || [ $reponse == 'yes' ] || [ $reponse == 'o' ] || [ $reponse == 'y' ]; then
-        xdg-open ~/Images/screenshots/GIF/tmp/output
-        until [ "$TRMN" == "oui" ] || [ "$TRMN" == "yes" ] || [ "$TRMN" == "o" ] || [ "$TRMN" == "y" ]
+    if [ $answer == 'yes' ] || [ $answer == 'y' ] 
+    then
+        $XDG ~/Images/screenshots/GIF/tmp/output
+        until [ "$TRMN" == "yes" ] || [ "$TRMN" == "y" ]
         do 
-            read -p "Modifications terminées ? oui/yes/o/y/non/no/n : " TRMN
+            read -p "Have you finished ? yes/no : " TRMN
         done
-        genegif
+        geneGif
     else
-        genegif
+        geneGif
     fi
 }
  
 user=$(whoami)
-testdir
-creajpg
+testDir
+testSoft
+creaPng
 modifs 
