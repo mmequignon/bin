@@ -1,17 +1,21 @@
 #!/bin/bash
 
 testDir(){
-    if [ ! -d "~/Images/screenshots" ]; then
+    if [ ! -d "~/Images/screenshots" ]
+    then
         mkdir ~/Images/screenshots
     fi
-    if [ ! -d "~/Images/screenshots/GIF" ]; then
+    if [ ! -d "~/Images/screenshots/GIF" ]
+    then
         mkdir ~/Images/screenshots/GIF
     fi
-    if [ ! -d "~/Images/screenshots/GIF/tmp" ]; then
+    if [ ! -d "~/Images/screenshots/GIF/tmp" ]
+    then
         mkdir ~/Images/screenshots/GIF/tmp
     fi
-    if [ ! -d "~/Images/screenshots/GIF/tmp/output" ]; then
-    mkdir ~/Images/screenshots/GIF/tmp/output
+    if [ ! -d "~/Images/screenshots/GIF/tmp/output" ]
+    then
+        mkdir ~/Images/screenshots/GIF/tmp/output
     fi
     content=$(ls -a ~/Images/screenshots/GIF/tmp/output/ | sed -e "/\.$/d" | wc -l)
     if [ ! $content -eq 0 ]; then
@@ -20,32 +24,33 @@ testDir(){
 }
 
 testSoft(){
-    if [! -e /usr/bin/xrandr ]
+    if [ -e /usr/bin/xrandr ]
     then
+        XRANDR="/usr/bin/xrandr"
+    else
         echo "/usr/bin/xrandr does not exist"
         exit 0
-    else
-        XRANDR="/usr/bin/xrandr"
     fi
-    if [! -e /usr/bin/ffmpeg ]
+    if [ -e /usr/bin/ffmpeg ]
     then
+        FFMPEG="/usr/bin/ffmpeg"
+    else 
         echo "/usr/bin/ffmpeg does not exist. Please install ffmpeg"
         exit 0
-    else FFMPEG="/usr/bin/ffmpeg"
     fi
-    if [! -e /usr/bin/convert ]
+    if [ -e /usr/bin/convert ]
     then                                                                                      
+        CONVERT="/usr/bin/convert"
+    else
         echo "/usr/bin/convert does not exist. Please install imagemagick"
         exit 0
-    else
-        CONVERT="/usr/bin/convert"
     fi    
     if [! -e /usr/bin/xdg-open ]
     then
+        XDG="/usr/bin/xdg-open"
+    else
         echo "/usr/bin/xrandr does not exist"
         exit 0
-    else
-        XDG="/usr/bin/xdg-open"
     fi    
 }
 
