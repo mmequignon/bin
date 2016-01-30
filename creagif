@@ -1,25 +1,25 @@
 #!/bin/bash
 
 testDir(){
-    if [ ! -d "~/Images/screenshots" ]
+    if [ ! -d "$homeDir/Images/screenshots" ]
     then
-        mkdir ~/Images/screenshots
+        mkdir $homeDir/Images/screenshots
     fi
-    if [ ! -d "~/Images/screenshots/GIF" ]
+    if [ ! -d "$homeDir/Images/screenshots/GIF" ]
     then
-        mkdir ~/Images/screenshots/GIF
+        mkdir $homeDir/Images/screenshots/GIF
     fi
-    if [ ! -d "~/Images/screenshots/GIF/tmp" ]
+    if [ ! -d "$homeDir/Images/screenshots/GIF/tmp" ]
     then
-        mkdir ~/Images/screenshots/GIF/tmp
+        mkdir $homeDir/Images/screenshots/GIF/tmp
     fi
-    if [ ! -d "~/Images/screenshots/GIF/tmp/output" ]
+    if [ ! -d "$homeDir/Images/screenshots/GIF/tmp/output" ]
     then
-        mkdir ~/Images/screenshots/GIF/tmp/output
+        mkdir $homeDir/Images/screenshots/GIF/tmp/output
     fi
-    content=$(ls -a ~/Images/screenshots/GIF/tmp/output/ | sed -e "/\.$/d" | wc -l)
+    content=$(ls -a $homeDir/Images/screenshots/GIF/tmp/output/ | sed -e "/\.$/d" | wc -l)
     if [ ! $content -eq 0 ]; then
-        rm ~/Images/screenshots/GIF/tmp/output/*
+        rm $homeDir/Images/screenshots/GIF/tmp/output/*
     fi
 }
 
@@ -45,11 +45,11 @@ testSoft(){
         echo "/usr/bin/convert does not exist. Please install imagemagick"
         exit 0
     fi    
-    if [! -e /usr/bin/xdg-open ]
+    if [ -e /usr/bin/xdg-open ]
     then
         XDG="/usr/bin/xdg-open"
     else
-        echo "/usr/bin/xrandr does not exist"
+        echo "/usr/bin/xdg-open does not exist"
         exit 0
     fi    
 }
@@ -62,15 +62,15 @@ captoreso(){
  
 creaPng(){
     captoreso
-    $FFMPEG -framerate 5 -f x11grab -video_size $resolution -i :0.0 -r 5 -q:v 1 ~/Images/screenshots/GIF/tmp/output/image-%05d.png
+    $FFMPEG -framerate 5 -f x11grab -video_size $resolution -i :0.0 -r 5 -q:v 1 $homeDir/Images/screenshots/GIF/tmp/output/image-%05d.png
 }
  
 geneGif(){
-    $CONVERT ~/Images/screenshots/GIF/tmp/output/* ~/Images/screenshots/GIF/tmp/output.gif
+    $CONVERT $homeDir/Images/screenshots/GIF/tmp/output/* $homeDir/Images/screenshots/GIF/tmp/output.gif
     NOW=$(date +%m-%d-%Y-%T)
-    $CONVERT -delay 20x100 ~/Images/screenshots/GIF/tmp/output.gif ~/Images/screenshots/GIF/tmp/slow.gif
-    $CONVERT ~/Images/screenshots/GIF/tmp/slow.gif -fuzz 10% -layers Optimize ~/Images/screenshots/GIF/"$NOW-capture.gif"
-    rm -R ~/Images/screenshots/GIF/tmp
+    $CONVERT -delay 20x100 $homeDir/Images/screenshots/GIF/tmp/output.gif $homeDir/Images/screenshots/GIF/tmp/slow.gif
+    $CONVERT $homeDir/Images/screenshots/GIF/tmp/slow.gif -fuzz 10% -layers Optimize $homeDir/Images/screenshots/GIF/"$NOW-capture.gif"
+    rm -R $homeDir/Images/screenshots/GIF/tmp
 }
  
 modifs(){
@@ -81,7 +81,7 @@ modifs(){
     done
     if [ $answer == 'yes' ] || [ $answer == 'y' ] 
     then
-        $XDG ~/Images/screenshots/GIF/tmp/output
+        $XDG $homeDir/Images/screenshots/GIF/tmp/output
         until [ "$TRMN" == "yes" ] || [ "$TRMN" == "y" ]
         do 
             read -p "Have you finished ? yes/no : " TRMN
@@ -93,6 +93,7 @@ modifs(){
 }
  
 user=$(whoami)
+homeDir=$HOME
 testDir
 testSoft
 creaPng
