@@ -76,6 +76,7 @@ for dev in "${!devices[@]}"
 do
     if [ "$dev"=="${arguments[1]}" ]
     then
+        screen="${arguments[0]}"
         device="${arguments[1]}"
     else
         echo "${arguments[1]}"
@@ -113,11 +114,12 @@ if [ $action == "off" ]
 then
     $xr --output $device --$action
     exit 0
+#elif [ -z $position ] || [ "$position" == "same-as" ]
+#then
+#    try 
+#        xrandr --output $device --mode $resolution --same-as $screen
+#        xrandr --addmode $device $resolution
 else
-    if [ -z $position ]
-    then
-        position="same-as"
-    fi
-    $xr --output $device --$action --$position LVDS1
+    $xr --output $device --$action --$position $screen
     exit 0
 fi
