@@ -108,17 +108,16 @@ then
     esac
 fi
 
-
-
+resolution=$( $xr | awk '/ connected/{printf($3)}' | awk 'BEGIN { FS="+" } /1/ { print $1 }' )
+screen=LVDS1
 if [ $action == "off" ]
 then
     $xr --output $device --$action
     exit 0
-#elif [ -z $position ] || [ "$position" == "same-as" ]
-#then
-#    try 
-#        xrandr --output $device --mode $resolution --same-as $screen
-#        xrandr --addmode $device $resolution
+elif [ -z $position ] || [ "$position" == "same-as" ]
+then
+    xrandr --addmode $device $resolution
+    xrandr --output $device --mode $resolution --same-as $screen    
 else
     $xr --output $device --$action --$position $screen
     exit 0
