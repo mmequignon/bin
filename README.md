@@ -32,13 +32,13 @@ This script is really helful.
 I have many LXC containers behind NAT, and I don't want to open range of ports.  
 So (as I am the only on to connect) I redirect specific UDP ports on specific containers.  
 I just have to add this information in my .ssh/config file like so :  
-
+```bash
 Host mycontainer  
     Port 13579  
     #Udp 60070  
     Hostname 123.456.789.123  
     User me  
-
+```
 The UDP line is commented out because ssh doesn't recognize it, but doesn't matters.  
 Just add it this way, ans mosh will use your ssh config file.  
 Enjoy !  
