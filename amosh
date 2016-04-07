@@ -49,9 +49,9 @@ hostname="$( echo $infos | $AWK '{ for (i=1;i<=NF;i++) { if( $i=="Hostname") { i
 #if udp isn't defined, use default mosh configuration (first udp port available begining at 60000)
 if [ -z "$udp" ]
 then
-    $MOSH --ssh="ssh -p $port" $user@$hostname
+    $MOSH --predict=always --ssh="ssh -p $port" $user@$hostname
 else
-    $MOSH -p $udp --ssh="ssh -p $port" $user@$hostname
+    $MOSH -p $udp --predict=always --ssh="ssh -p $port" $user@$hostname
 fi
 
 exit 0
