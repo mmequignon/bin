@@ -40,5 +40,5 @@ Host mycontainer
     User me  
 ```
 The UDP line is commented out because ssh doesn't recognize it, but doesn't matters.  
-Just add it this way, ans mosh will use your ssh config file.  
+Just add it this way, and mosh will use your ssh config file.  
 Enjoy !  
