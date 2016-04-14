@@ -1,0 +1,82 @@
+#!/usr/bin/python3
+
+import httplib2
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+import re
+import sys
+import urllib.request
+
+def defineRegex(domainName):
+    return r"http(s)?\:\/\/"+domainName+".*"
+
+def request4content():
+    return input( "URL : " )
+
+def getCodeFromPage(urlLink):
+    try :
+        http = httplib2.Http()
+        status, response = http.request(urlLink)
+        return response
+    except :
+        print("403 : Parsing disallowed here !")
+        raise
+
+def getDomainName(urlLink): 
+    parsed_uri = urlparse(urlLink)
+    return parsed_uri.netloc
+
+def fromDomain( domainRegex , link ):
+    return re.match(domainRegex, link )
+
+def mp3(mp3Regex , link):
+    return re.match(mp3Regex, link )
+
+def getLinksFromPage(urlLink, domainRegex, mp3Regex):
+    array = []
+    soup = BeautifulSoup( getCodeFromPage(urlLink) , "html5lib") 
+    for link in soup.find_all("a" , href=re.compile(domainRegex)):
+        link = str(link.get("href"))
+        if mp3(mp3Regex , link) or link==urlLink:
+            continue
+        array.append(link)
+    list(set(array))
+    return array
+
+
+def getMp3FromLink( urlLink , domainRegex , mp3Regex ):
+    array = []
+    soup = BeautifulSoup( getCodeFromPage(urlLink) , "html.parser")
+    for link in soup.find_all("a", href=re.compile("http.*\.mp3$")):
+        array.append(link.get("href"))
+    list(set(array))
+    return array
+
+def dlProgress(count, blockSize, totalSize):
+    percent = int(count*blockSize*100/totalSize)
+    sys.stdout.write("\r" + "Downloading : " +  fileName + "...%d%%" % percent)
+    sys.stdout.flush()
+
+def downloadFiles( mp3List ):
+    global fileName
+    for url in mp3List:
+        fileName = url.split("/")[-1]
+        urllib.request.urlretrieve(url , fileName , reporthook=dlProgress)
+
+
+myLinks = []
+mp3List = []
+
+urlLink = request4content()
+domainName = getDomainName(urlLink)
+domainRegex = defineRegex(domainName)
+mp3Regex = r".*\.mp3"
+
+myLinks.extend(getLinksFromPage( urlLink , domainRegex , mp3Regex ))
+
+for i in myLinks :
+    mp3List.extend(getMp3FromLink( i , domainRegex , mp3Regex ))
+
+list(set(mp3List))
+
+downloadFiles(mp3List)
