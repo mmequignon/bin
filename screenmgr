@@ -12,18 +12,18 @@ arguments=( "$@" )
 if [ ${#arguments[@]} -lt "1" ]
 then
     echo "Missing options. Check out for the right syntax." 
-    echo "screenmgr [action] [device] [position]"
-    echo "screenmgr -l to list available devices"
-    echo -e "\e[1;37mactions \e[0m"
-    echo "-c Activating screen mode"
-    echo "-d Disactivating screen mode"
-    echo -e "\e[1;37mdevices \e[0m"
-    echo "Please use, here, one of the available devices printed with the "-l" option."
-    echo -e "\e[1;37mpotition \e[0m"
-    echo "--left In order to place the new screen on the left of the primary one."
-    echo "--right In order to place the new screen on the right of the primary one."
-    echo "--clone In order to have the same picture on both screens"
-    exit 0
+    echo "screenmgr [action] [device] [position]"                                                            
+    echo "screenmgr -l to list available devices"                                                            
+    echo -e "\e[1;37mactions \e[0m"                                                                          
+    echo "-c To activate secundary output"                                                                   
+    echo "-d To disactivate secundary output"                                                                
+    echo -e "\e[1;37mdevices \e[0m"                                                                          
+    echo "Please use, here, one of the available devices printed with the "-l" option."                      
+    echo -e "\e[1;37mpotition \e[0m"                                                                         
+    echo "--left In order to place the new screen on the left of the primary one."                           
+    echo "--right In order to place the new screen on the right of the primary one."                         
+    echo "--clone In order to have the same picture on both screens"                                         
+    exit 0  
 fi
 
 string=$( $xr | awk '/ connected/{printf("%s ", $1 )}' )
@@ -53,8 +53,8 @@ case ${arguments[0]} in
         echo "screenmgr [action] [device] [position]"
         echo "screenmgr -l to list available devices"
         echo -e "\e[1;37mactions \e[0m"
-        echo "-c Activating screen mode"
-        echo "-d Disactivating screen mode"
+        echo "-c To activate secundary output"
+        echo "-d To disactivate secundary output"
         echo -e "\e[1;37mdevices \e[0m"
         echo "Please use, here, one of the available devices printed with the "-l" option."
         echo -e "\e[1;37mpotition \e[0m"
@@ -74,9 +74,9 @@ esac
 
 for dev in "${!devices[@]}"
 do
-    if [ "$dev"=="${arguments[1]}" ]
+    if [ "$dev"=="${arguments[1]}" ] || [ "$action"=="off" ]
     then
-        screen="${arguments[0]}"
+        screen="${devices[0]}"
         device="${arguments[1]}"
     else
         echo "${arguments[1]}"
@@ -92,9 +92,6 @@ done
 if [ "$action" != "off" ] 
 then
     case ${arguments[2]} in 
-        --left)
-            position="left-of"
-            ;;
         --right)
             position="right-of"
             ;;
@@ -108,16 +105,16 @@ then
     esac
 fi
 
+
 resolution=$( $xr | awk '/ connected/{printf($3)}' | awk 'BEGIN { FS="+" } /1/ { print $1 }' )
-screen=LVDS1
 if [ $action == "off" ]
 then
     $xr --output $device --$action
     exit 0
 elif [ -z $position ] || [ "$position" == "same-as" ]
 then
-    xrandr --addmode $device $resolution
-    xrandr --output $device --mode $resolution --same-as $screen    
+    $xr --addmode $device $resolution
+    $xr --output $device --mode $resolution --same-as $screen    
 else
     $xr --output $device --$action --$position $screen
     exit 0

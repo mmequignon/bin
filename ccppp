@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]
+then
+    echo "Missing options. You must add a project name." 
+    echo "ccp PROJECT_NAME"                                                            
+    exit 1
+fi
+
+echo "Building directories."
+/bin/mkdir ./$1 && cd $1
+mkdir ./build
+/bin/mkdir ./src
+
+echo "Downloading CMakeLists…"
+/usr/bin/wget -q https://raw.githubusercontent.com/mmequignon/template-cpp/master/CMakeLists.txt
+/bin/sed -i -- "s/MY_PROJECT/$1/" CMakeLists.txt 
+cd ./src
+echo "Downloading main.cpp…"
+/usr/bin/wget -q https://raw.githubusercontent.com/mmequignon/template-cpp/master/main.cpp
+echo "Downloading main_test.cpp…"
+/usr/bin/wget -q https://raw.githubusercontent.com/mmequignon/template-cpp/master/main_test.cpp
+
+cd ..
+
+echo "Done !"
+
+exit 0
