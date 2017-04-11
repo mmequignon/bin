@@ -81,8 +81,8 @@ pg-cli <container-name> <db-name>
 ```
 
 Requirements :
- - [pgcli] (https://github.com/dbcli/pgcli)
- - a /tmp/pg_table file filled by the [lxc-up] (https://github.com/mmequignon/bin/blob/master/lxc-up) script.
+ - (https://github.com/dbcli/pgcli "pg-cli")
+ - a /tmp/pg_table file filled by the (https://github.com/mmequignon/bin/blob/master/lxc-up "lxc-up") script.
  - SSH properly configured.
 
 It allows me to connect on a remote database, available on `localhost`
