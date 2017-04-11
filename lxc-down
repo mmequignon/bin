@@ -1,1 +1,26 @@
-bin/lxc-down
+#!/bin/bash
+
+LXCSTOP="sudo /usr/bin/lxc-stop"
+FUSERMOUNT="/bin/fusermount"
+SLEEP="/bin/sleep"
+TMUX="/usr/bin/tmux"
+SED="/bin/sed"
+PG_TABLE="/tmp/pg_table"
+
+function remove-line {
+    $SED -i "/$1/d" $PG_TABLE
+}
+
+arguments=( "$@" )
+if [ ${#arguments[@]} -lt "1" ]
+then
+    echo "Missing options"
+    exit 0
+fi
+
+$TMUX kill-window -a -t $1
+$TMUX kill-session -t $1
+$FUSERMOUNT -u $HOME/sshfs/$1
+$SLEEP 10
+$LXCSTOP -n $1
+$(remove-line $1)

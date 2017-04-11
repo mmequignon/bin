@@ -1,1 +1,56 @@
-bin/lxc-up
+#!/bin/bash
+
+LXCSTART="sudo /usr/bin/lxc-start"
+SSHFS="/usr/bin/sshfs"
+SLEEP="/bin/sleep"
+TMUX="/usr/bin/tmux"
+SSH="/usr/bin/ssh"
+PG_TABLE="/tmp/pg_table"
+PG_PORT="5432"
+
+function get-next-port {
+    retour=$(($(awk '{print $2}' $PG_TABLE | sort | awk 'END{print}')+1))
+    if [ $retour -eq "1" ]
+    then
+        echo 5432
+    else
+        echo $retour
+    fi
+}
+
+function get-container-port {
+    echo $(grep $1 $PG_TABLE | awk '{print $2}')
+}
+
+arguments=( "$@" )
+if [ ${#arguments[@]} -lt "1" ]
+then
+    echo "Missing options"
+    exit 0
+fi
+
+$LXCSTART -n $1
+$SLEEP 10
+if [ ! -d "$HOME/sshfs/$1" ]
+then
+    echo "Creating $HOME/sshfs/$1"
+    mkdir $HOME/sshfs/$1
+fi
+sshfs $1: -o idmap=user $HOME/sshfs/$1
+
+new_port=$(get-next-port)
+
+$TMUX -2 new-session -d -s $1
+$TMUX rename-window -t $1:0 CODE
+$TMUX select-window -t $SESSION:CODE
+$TMUX new-window -t $1:1 -n SERVER
+$TMUX select-window -t $SESSION:SERVER
+$TMUX send-keys "ssh $1" C-m
+$TMUX send-keys "cd odoo" C-m C-l
+$TMUX new-window -t $1:2 -n TUN
+$TMUX select-window -t $SESSION:TUN
+$TMUX send-keys "ssh -N $1 -L $new_port:localhost:5432" C-m C-l
+$TMUX select-window -t $SESSION:CODE
+$TMUX send-keys "cd sshfs/$1" C-m C-l
+echo "$1 $new_port" >> $PG_TABLE
+$TMUX a -t $1
