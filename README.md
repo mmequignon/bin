@@ -68,3 +68,26 @@ Lxc-down:
  - Kills the tmux session.
  - Unmount the sshfs mountpoint.
  - Stops the container.
+
+---
+
+### pg-cli
+
+Just a wrapper of the pgcli postgres client.
+
+Usage:
+```
+pg-cli <container-name> <db-name>
+```
+
+Requirements :
+ - [pgcli] (https://github.com/dbcli/pgcli)
+ - a /tmp/pg_table file filled by the [lxc-up] (https://github.com/mmequignon/bin/blob/master/lxc-up) script.
+ - SSH properly configured.
+
+It allows me to connect on a remote database, available on `localhost`
+through a SSH tunnel.
+
+ - It uses the `/tmp/pg_table` created by the `lxc-up` script
+   to get the port to connect on.
+ - It gets the username to connect with in your `~/.ssh/config` file.

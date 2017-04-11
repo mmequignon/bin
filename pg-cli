@@ -1,0 +1,18 @@
+#!/bin/bash
+
+PGCLI="/usr/bin/pgcli"
+PG_TABLE="/tmp/pg_table"
+AWK="/usr/bin/awk"
+
+function get-user {
+    echo "$($AWK '/'$1'/ {for(i=1; i<=4; i++) {getline ; print;}}' $HOME/.ssh/config | grep User | $AWK '{print $2}')"
+}
+
+function get-pg-port {
+    echo $(grep $1 $PG_TABLE | awk '{print $2}')
+}
+
+pg_port=$(get-pg-port $1)
+username=$(get-user $1)
+
+$PGCLI -U $username -h localhost -p $pg_port -d $2
