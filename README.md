@@ -47,17 +47,17 @@ My scripts for starting / stopping containers.
 
 usage :
 ```
-lxc-up <container-name>
-lxc-down <container-name>
+lxc-up `container-name`
+lxc-down `container-name`
 ```
 dependancies :
  - softs : sshfs, tmux
  - ssh properly configured, with .ssh/config file and key authentication.
 
 Lxc up:
- - Starts the container <container-name>.
- - Mounts the remote homedir on ~/sshfs/<containername> with sshfs.
- - Creates a tmux session, named <container-name>.
+ - Starts the container `container-name`.
+ - Mounts the remote homedir on ~/sshfs/`containername` with sshfs.
+ - Creates a tmux session, named `container-name`.
  - Creates a first window in the tmux session named "CODE".
  - Creates a second one, named "SERVER" logged into the container through SSH.
  - Creates a third one, named "TUN", and open a SSH tunnel.
