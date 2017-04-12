@@ -20,6 +20,7 @@ fi
 
 $TMUX kill-window -a -t $1
 $TMUX kill-session -t $1
+$TMUX kill-window -t TUNS:$1
 $FUSERMOUNT -u $HOME/sshfs/$1
 $SLEEP 10
 $LXCSTOP -n $1

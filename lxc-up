@@ -47,10 +47,10 @@ $TMUX new-window -t $1:1 -n SERVER
 $TMUX select-window -t $SESSION:SERVER
 $TMUX send-keys "ssh $1" C-m
 $TMUX send-keys "cd odoo" C-m C-l
-$TMUX new-window -t $1:2 -n TUN
-$TMUX select-window -t $SESSION:TUN
-$TMUX send-keys "ssh -N $1 -L $new_port:localhost:5432" C-m C-l
 $TMUX select-window -t $SESSION:CODE
 $TMUX send-keys "cd sshfs/$1" C-m C-l
+$TMUX new-window -t TUNS -n $1 2> /dev/null || $TMUX new-session -d -s TUNS && $TMUX rename-window -t TUNS:0 $1
+$TMUX select-window -t TUNS:$1
+$TMUX send-keys "ssh -N $1 -L $new_port:localhost:5432" C-m C-l
 echo "$1 $new_port" >> $PG_TABLE
 $TMUX a -t $1
