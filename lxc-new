@@ -1,0 +1,25 @@
+#!/bin/bash
+
+SSHCONFIG="$HOME/.ssh/config"
+LXC_CREATE_PREFIX="sudo /usr/bin/lxc-create -n"
+LXC_CREATE_SUFFIX="-t debian -- -r stretch"
+
+arguments=( "$@" )
+if [ ${#arguments[@]} -lt "1" ]
+then
+    echo "Missing options"
+    exit 1
+fi
+
+$LXC_CREATE_PREFIX $1 $LXC_CREATE_SUFFIX
+
+if [ $? -ne 0 ]
+then
+    exit $?
+fi
+
+echo "" >> $SSHCONFIG
+echo "Host $1" >> $SSHCONFIG
+echo "    Hostname $1.lxc" >> $SSHCONFIG
+echo "    User UNKNOWN" >> $SSHCONFIG
+echo "    Port 22" >> $SSHCONFIG
