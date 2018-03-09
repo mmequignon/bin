@@ -11,6 +11,10 @@ function remove-line {
     $SED -i "/$1/d" $PG_TABLE
 }
 
+function remove-mountpoint {
+    rmdir $HOME/sshfs/$1
+}
+
 arguments=( "$@" )
 if [ ${#arguments[@]} -lt "1" ]
 then
@@ -25,3 +29,4 @@ $FUSERMOUNT -u $HOME/sshfs/$1
 $SLEEP 10
 $LXCSTOP -n $1
 $(remove-line $1)
+$(remove-mountpoint $1)
