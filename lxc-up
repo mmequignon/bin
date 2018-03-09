@@ -9,12 +9,17 @@ PG_TABLE="/tmp/pg_table"
 PG_PORT="5432"
 
 function get-next-port {
-    retour=$(($(awk '{print $2}' $PG_TABLE | sort | awk 'END{print}')+1))
-    if [ $retour -eq "1" ]
+    if [ ! -f "/tmp/pg_table" ]
     then
         echo 5432
     else
-        echo $retour
+        retour=$(($(awk '{print $2}' $PG_TABLE | sort | awk 'END{print}')+1))
+        if [ $retour -eq "1" ]
+        then
+            echo 5432
+        else
+            echo $retour
+        fi
     fi
 }
 
@@ -45,8 +50,7 @@ $TMUX rename-window -t $1:0 CODE
 $TMUX select-window -t $SESSION:CODE
 $TMUX new-window -t $1:1 -n SERVER
 $TMUX select-window -t $SESSION:SERVER
-$TMUX send-keys "ssh $1" C-m
-$TMUX send-keys "cd odoo" C-m C-l
+$TMUX send-keys "ssh -Y $1" C-m
 $TMUX select-window -t $SESSION:CODE
 $TMUX send-keys "cd sshfs/$1" C-m C-l
 $TMUX new-window -t TUNS -n $1 2> /dev/null || ( $TMUX new-session -d -s TUNS && $TMUX rename-window -t TUNS:0 $1 )
