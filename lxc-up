@@ -8,6 +8,9 @@ SSH="/usr/bin/ssh"
 PG_TABLE="/tmp/pg_table"
 PG_PORT="5432"
 
+# Function that checks if a file names /tmp/pg_table exists.
+# If true, returns 5432.
+# If false, cheks the higher value in the file and returns the next one.
 function get-next-port {
     if [ ! -f "/tmp/pg_table" ]
     then
@@ -23,6 +26,7 @@ function get-next-port {
     fi
 }
 
+# Function that get the port corresponding to the name passed as argument.
 function get-container-port {
     echo $(grep $1 $PG_TABLE | awk '{print $2}')
 }
@@ -34,6 +38,7 @@ then
     exit 0
 fi
 
+# Starts the container, mounts the homedir of the remote user in sshfs/container_name.
 $LXCSTART -n $1
 $SLEEP 10
 if [ ! -d "$HOME/sshfs/$1" ]
@@ -43,8 +48,8 @@ then
 fi
 sshfs $1: -o idmap=user $HOME/sshfs/$1
 
-new_port=$(get-next-port)
 
+# Do tmux things.
 $TMUX -2 new-session -d -s $1
 $TMUX rename-window -t $1:0 CODE
 $TMUX select-window -t $SESSION:CODE
@@ -53,6 +58,10 @@ $TMUX select-window -t $SESSION:SERVER
 $TMUX send-keys "ssh -Y $1" C-m
 $TMUX select-window -t $SESSION:CODE
 $TMUX send-keys "cd sshfs/$1" C-m C-l
+
+# Creates an SSH tunnel betweek localhost:new_port and remote:5432 in a dedicated tmux session.
+# Adds a new line in /tmp/pg_table
+new_port=$(get-next-port)
 $TMUX new-window -t TUNS -n $1 2> /dev/null || ( $TMUX new-session -d -s TUNS && $TMUX rename-window -t TUNS:0 $1 )
 $TMUX send-keys -t TUNS:$1 "ssh -N $1 -L $new_port:localhost:5432" C-m C-l
 echo "$1 $new_port" >> $PG_TABLE
