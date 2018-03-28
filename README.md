@@ -62,3 +62,17 @@ through a SSH tunnel.
  - It uses the `/tmp/pg_table` created by the `lxc-up` script
    to get the port to connect on.
  - It gets the username to connect with in your `~/.ssh/config` file.
+
+---
+
+### paph
+
+A script that generates a random set of words.
+It comes with `words_alpha.txt` that comes from [this repo](https://github.com/dwyl/english-words).
+Both script and dict files should be placed in the same diretory.
+
+It's role is to provide random passphrases.
+Usage:
+  - paph : prints 6 random words (default value)
+  - paph 12 : prints 12 random words
+  - paph -h : shows help

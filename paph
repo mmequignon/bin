@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+
+import os
+import random
+import sys
+
+
+def help():
+    print(
+        """Usage :\n"""
+        """paph -h shows this help\n"""
+        """paph 5 generates a passphrase of 5 random words.\n"""
+        """paph generates a passphrase of 6 random words.\n"""
+        """As a 6 words long passphrase is recommended, """
+        """this is the default value.\n""")
+    exit(0)
+
+
+def wrong_args(arg):
+    print("Wrong arg. '%s' found" % arg)
+    help()
+
+
+def no_dictfile(path):
+    print("No dict file named %s" % path)
+    exit(1)
+
+
+def valid_word(word):
+    return len(set(word)) > 3
+
+
+if __name__ == "__main__":
+    filename = "words_alpha.txt"
+    path = os.path.join(os.path.dirname(__file__), filename)
+    if not os.path.exists(path) or not os.path.isfile(path):
+        no_dictfile(path)
+    args = sys.argv
+    qty = 6
+    if len(args) > 1:
+        if args[1] == "-h":
+            help()
+        if not args[1].isdecimal():
+            wrong_args(args[1])
+        qty = int(args[1])
+    with open(path, "rb") as f:
+        random.seed()
+        words = [word.decode("latin-1") for word in f if valid_word(word)]
+        choices = [
+            random.choice(words).replace("\r", "").replace("\n", "") for
+            i in range(qty)]
+        print(" ".join(choices))
